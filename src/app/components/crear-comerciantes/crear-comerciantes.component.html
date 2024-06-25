@@ -1,0 +1,185 @@
+<app-nav></app-nav>
+<p *ngIf="!userLoginOn" class="alert alert-danger">Usuario NO autenticado</p>
+<p *ngIf="userLoginOn" class="alert alert-success">Usuario Autenticado</p>
+
+<div class="card-body">
+
+    <div class="card-body m-0"> 
+  
+
+<p *ngIf="errorMessage.length!=0" class="text-danger">{{errorMessage}}</p>
+<div *ngIf="(userLoginOn && !editMode) || !userLoginOn">
+    <p><b> Nombre: </b> {{comerciante.nombre}} </p>
+    <p><b> fecha Registro: </b> {{comerciante.fecha_registro}}</p>
+    <p><b> Estado: </b> {{comerciante.estado}}</p>
+    <button *ngIf="userLoginOn && !editMode" (click)="editMode=true"  class="btn btn-dark"><img
+        src="https://cdn.icon-icons.com/icons2/1572/PNG/96/3592815-compose-create-edit-edit-file-office-pencil-writing_107734.png"
+        width="8%" alt="editar" />Editar Comerciante</button>
+</div>
+
+    </div>
+
+   <div class="card-header">
+    
+<form *ngIf="userLoginOn" [formGroup]="registerForm" class="w-250 container card" >
+
+    <div class="form-row row">
+   
+   <div class="col-md-5">
+
+    <div class="form-group">
+        <div class="card-header">
+             <span >
+            <p class="text-primary">Datos Generales</p>
+          </span>
+        </div>
+       
+
+        <div >
+            <label for="inputFirstName" class="col-form-label">Nombre</label>
+        <input type="text" formControlName="nombre" class="form-control" id="nombre">
+        
+            <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="text-danger">
+                <div *ngIf="nombre.errors?.['required']">
+                    El Nombre es requerido.
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+   
+
+    <div class="form-group">
+        
+        <div >
+            <label for="inputLasttName" class="col-form-label">Departamentos</label>
+        <select  class="form-control" name="departamentos" formControlName="departamentos"
+        [(ngModel)]="seleccionado"
+        #mySelect
+        (change)="changeClassesLevel(mySelect.value)">
+            <option [value]="item.id_departamento" *ngFor="let item of listaDep">{{item.nombreDepartamento}}</option>
+            </select>
+        <div *ngIf="departamentos.invalid && (departamentos.dirty || departamentos.touched)" class="text-danger">
+            <div *ngIf="departamentos.errors?.['required']">
+                EL Departamento es requerido.
+            </div>
+        </div>
+    </div>
+    </div>
+
+ 
+    <div class="form-group">
+       
+        <div >
+            <label for="inputLasttName" class="col-form-label">Municipios</label>
+        <select  class="form-control" name="municipios" formControlName="municipios">
+            <option [value]="item.id_municipio" *ngFor="let item of listaMun">{{item.municipio}}</option>
+            </select>
+        <div *ngIf="municipios.invalid && (municipios.dirty || municipios.touched)" class="text-danger">
+            <div *ngIf="municipios.errors?.['required']">
+                EL Municipio es requerido.
+            </div>
+        </div>
+    </div>
+    </div>
+   
+
+</div>
+
+
+
+<div class="col-md-5">
+    <div class="form-group">
+    
+        <div >
+
+            <label for="inputLasttName" class="col-form-label">Fecha Registro</label>
+        
+            <mat-form-field appearance="fill">
+                <mat-label>Fecha Registro</mat-label>
+                <input matInput [matDatepicker]="dob" formControlName="fecha_registro">
+                <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
+                <mat-datepicker #dob></mat-datepicker>
+              </mat-form-field>
+            
+        <div *ngIf="fechaRegistro.invalid && (fechaRegistro.dirty || fechaRegistro.touched)" class="text-danger">
+            <div *ngIf="fechaRegistro.errors?.['required']">
+                La fecha es requerida.
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="form-group">
+       
+        <div>
+            <label for="inputLasttName" class="col-form-label">Telefono</label>
+        <input type="text" formControlName="telefono" class="form-control" id="telefono"
+        (keypress)="validateFormat($event)">
+    
+    </div>
+    </div>
+ 
+
+    <div class="form-group">
+     
+        <div >
+            <label for="inputLasttName" class="col-form-label">Correo</label>
+        <input type="text" formControlName="correo_electronico" class="form-control" id="correo_electronico"
+        pattern="^[a-z0-9._%+\-]+@[a-z0-9.\-]+.[a-z]{2,4}$" 
+        [ngClass]="{'is-invalid animated shake': correo_electronico.invalid && correo_electronico.touched}">
+    
+    </div>
+    </div>
+    <div class="form-group"> 
+         <div >
+            <label for="inputLasttName" class="col-form-label">Posee establecimientos? </label>
+        <input type="checkbox"  formControlName="check" value="false" (change)="getId($event,'3')"> 
+    </div>
+   
+    </div>
+</div>
+
+ 
+        <div *ngIf="check==true"  class="card-body"> 
+
+ <app-crear-establecimientos
+ (totIngresos)="getIngresos($event)" 
+ (totEmpleados)="getEmpleados($event)" 
+ >
+
+ </app-crear-establecimientos>
+        </div>
+     
+      
+        
+        <footer class="bg-body-tertiary text-center">
+            
+
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+       
+        <span class="text-primary  mx-5">
+            Total ingresos Formulario: 
+            <span class="text-primary fw-bold"  >
+                  {{ totIngresos | number }}
+            </span>   
+             
+          </span>
+          
+          <span class="text-primary  mx-5">
+            Cantidad de Empleados: 
+            <span class="text-primary fw-bold"  >
+                 {{ totEmpleados }}
+                </span>  
+          </span>
+
+    <button type="submit" (click)="saveData()"  class="btn btn-dark mt-3  mx-5">Enviar Formulario</button>
+   
+    </div> </footer>
+    </div>
+
+</form>
+</div>
+
+</div>

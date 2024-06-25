@@ -1,0 +1,75 @@
+
+<div class="container text-center pb-5">
+    <img src="assets\fondo.png" 
+    class="img-fluid" style="position: absolute; right: 0; top: 0; z-index: -100; opacity: 0.75;">
+
+<div class="container mt-5" style="max-width:480px">
+
+<span class=" mx-5 text-white">
+            Debes iniciar Sesion para ingresar a la plataforma
+        </span>
+    <div class="card container mt-5" style="max-width:400px">
+    
+
+        <div class="card-header">
+           Digita tu Email y Contraseña
+        </div>
+
+
+<form [formGroup]="loginForm" >
+    <p class="text-danger">{{loginError}}</p>
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Email</label>
+      <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">  
+        <div *ngIf="email.invalid && (email.dirty || email.touched)"
+            class="text-danger">
+            <div *ngIf="email.errors?.['required']">
+                El Email es requerido.
+            </div>
+            <div *ngIf="email.errors?.['email']">
+                El Email debe tener un formato válido.
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Password</label>
+      <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
+        <div *ngIf="password.invalid && (password.dirty || password.touched)"
+            class="text-danger">
+            <div *ngIf="password.errors?.['required']">
+                El Password es requerido.
+            </div>
+        </div> 
+    </div>
+
+    <div class="mb-3">
+        <input type="checkbox"  formControlName="check" value="false"  > 
+        <label for="e1" class="form-label">Acepto Terminos y Condiciones</label>
+
+
+
+    </div>
+
+
+    <button type="submit" (click)="login()" class="btn btn-primary">Iniciar Sesión</button>
+</form>
+
+</div>
+
+
+<div class="card-body">
+
+    <p></p>
+
+    <p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+
+
+
+</div>
+
+</div>

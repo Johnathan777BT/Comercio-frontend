@@ -1,0 +1,62 @@
+
+
+<div class="card-body">
+    <div class="card-body m-0">   
+
+        <div  *ngIf="userLoginOn" class="card-body">  
+            <form [formGroup]="form" class="w-150 container mt-3 card">
+
+
+              <span >
+                <p class="text-primary">Gestionar Establecimientos</p>
+              </span>
+                <input  type="hidden"
+                 class="form-control my-2" formControlName="nombre" placeholder="Nombre">
+              
+                <ng-container formArrayName="arreglo"
+                 *ngIf="form.get('arreglo')['controls'].length > 0">
+              
+                  <div class="row mb-2 col-12"
+                  formGroupName="arreglo"
+                   *ngFor="let item of form.get('arreglo')['controls']; index as i" [formGroupName]="i">
+               <input type="hidden" class="form-control" formControlName="id" placeholder="id" >
+                    <div class="col">
+                     
+                      <label for="inputLasttName" class="col-form-label">Nombre:</label>
+                      <input type="text" class="form-control" formControlName="nombre" placeholder="Nombre" required=""
+                     >
+                      
+                    </div>
+                    
+                    <div class="col">
+                      <label for="inputLasttName" class="col-form-label">Ingresos:</label>
+                      <input type="text" class="form-control"
+                      formControlName="ingresos" placeholder="Ingresos" required=""
+                      (keypress)="validateFormat($event)">
+                    </div>
+
+                    <div class="col">
+                      <label for="inputLasttName" class="col-form-label">No de Empleados:</label>
+                        <input type="number" class="form-control" formControlName="nro_empleados" placeholder="Nro Empleados" required=""
+                        [hidden]="">
+                      </div>
+              
+                    <div class="col">
+                      <button class="btn btn-danger" (click)="delete(i)">Borrar</button>
+                    </div>
+                    <div  class="col">
+                        <button class="btn btn-success" (click)="actualizar(i)">{{nombreboton}}</button>
+                      </div>
+
+                  </div>
+              
+                </ng-container>
+              
+                <button class="btn btn-primary mt-3" (click)="agregarEstablecimientos()">Agregar Establecimientos</button>
+              
+              </form>
+        </div>
+ 
+
+    </div>
+</div>

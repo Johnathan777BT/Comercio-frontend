@@ -1,0 +1,18 @@
+<app-nav></app-nav>
+<p *ngIf="!userLoginOn" class="alert alert-danger">Usuario NO autenticado</p>
+<p *ngIf="userLoginOn" class="alert alert-success">Usuario Autenticado</p>
+
+<div class="card ">
+    <div class="card-header">
+        Listar Comerciantes Creados
+    </div>
+    <div class="card-header">
+        <button class="btn btn-danger" routerLink="/crear-comerciantes/0/0">Crear Nuevo Comerciante</button>
+        <button  (click)="downloadCSV()" class="btn btn-outline-danger">Descargar Reporte en CSV</button>
+    </div> 
+    <div class="card-header">
+      <!-- <app-personal-details></app-personal-details> --> 
+        <app-list-comerciantes></app-list-comerciantes>
+    </div>
+
+</div>
