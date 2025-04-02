@@ -5,11 +5,23 @@ import { Injectable , signal } from '@angular/core';
 })
 export class DataService {
 
-  datosCompartidos = signal<number>(0);
-  datosCompartidos2 = signal<boolean>(false);
+ 
+   private datos =['dato1', 'dato2'];
+
+   getDatos()
+   {
+      return [...this.datos];
+   }
 
   constructor() { }
 
-  
+  setDato1(dato:string){
+    this.datos[0]= dato;
+  }
+
+  setDato2(dato:string){
+    this.datos[1]= dato;
+  }
+
 
 }

@@ -24,6 +24,8 @@ import { ContainerEstablecimientoComponent } from './components/container-establ
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import {DatePipe} from '@angular/common';
+import { ListUsuariosComponent } from './components/list-usuarios/list-usuarios.component';
+import { UsuarioComponent } from './auth/usuario/usuario.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import {DatePipe} from '@angular/common';
     ListComerciantesComponent,
     CrearComerciantesComponent,
     CrearEstablecimientosComponent,
-    ContainerEstablecimientoComponent
+    ContainerEstablecimientoComponent,
+    ListUsuariosComponent,
+    UsuarioComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -53,7 +57,7 @@ import {DatePipe} from '@angular/common';
   providers: [
     {provide:HTTP_INTERCEPTORS,useClass:JwtInterceptorService,multi:true},
     {provide:HTTP_INTERCEPTORS,useClass:ErrorInterceptorService,multi:true},
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    {provide: MAT_DATE_LOCALE, useValue: 'en-US'},
     { provide: DatePipe }
     
   ],

@@ -38,6 +38,13 @@ export class DashboardComponent implements OnInit {
      
       a.href = window.URL.createObjectURL(blob);
       a.click();
+      }, err => {
+        
+        if(err.status==403){
+          alert('No tiene permisos para realizar la solicitud');
+        }
+        
+        // Aquí se emitirá el alerta con el mensaje que `throwError` devuelva.
       }
       
     )

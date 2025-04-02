@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Establecimiento } from '../comerciante/establecimiento';
 
 @Injectable({
   providedIn: 'root'
@@ -18,14 +19,14 @@ export class EstablecimientoService {
   }
 
     
-  update(establecimiento: String, id:number):Observable<any>
+  update(establecimiento: Establecimiento, id:number):Observable<any>
   {
     return this.http.put(environment.urlApi+"establecimientos/act/"+id, establecimiento).pipe(
       catchError(this.handleError)
     )
   }
 
-  create(establecimiento: String):Observable<any>
+  create(establecimiento: Establecimiento):Observable<any>
   {
     return this.http.post(environment.urlApi+"establecimientos", establecimiento).pipe(
       catchError(this.handleError)

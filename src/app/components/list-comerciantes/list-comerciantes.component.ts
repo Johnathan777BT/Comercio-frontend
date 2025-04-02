@@ -5,6 +5,7 @@ import { LoginService } from 'src/app/services/auth/login.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-list-comerciantes',
@@ -25,8 +26,18 @@ export class ListComerciantesComponent implements OnInit  {
   json:String="";
   estado:boolean=false;
   comerciante:Comerciante=new Comerciante();
+  nombre_campo:string=" ";
 
-  constructor(private router:Router, private comercianteService:ComercianteService, private loginService:LoginService){
+  formulario = this.formBuilder.group({
+
+    nombre: ['', Validators.required],
+
+  });
+
+
+  
+
+  constructor(private formBuilder: FormBuilder, private router:Router, private comercianteService:ComercianteService, private loginService:LoginService){
     this.totalItems=0;
     
     this.loginService.userLoginOn.subscribe({
@@ -53,18 +64,19 @@ export class ListComerciantesComponent implements OnInit  {
 
     const confirmar=confirm("Esta Usted seguro que desea eliminar este Comerciante?");
 
-if (confirmar)
-{ 
-    console.log("id: "+com.id_com);
+    if (confirmar)
+    { 
+        console.log("id: "+com.id_com);
 
-    
-    this.comercianteService.delete(com.id_com).subscribe({
+     
+      this.comercianteService.deletecom(com.id_com).subscribe({
       next:() => {
-      
+        console.log("dfgdf");
        alert('Comerciante Eliminado con Exito!');
-       this.getList(this.page);
+       //this.getList(this.page);
+       this.getListbyName(this.page, '');
        this.router.navigate(['inicio']);
-        
+       
       },
       error:(errorData)=> {
         console.error(errorData);
@@ -96,6 +108,12 @@ if (confirmar)
      
       a.href = window.URL.createObjectURL(blob);
       a.click();
+      }, err => {
+        if(err.status==403){
+          alert('No tiene permisos para realizar la solicitud');
+        }
+        
+        // Aquí se emitirá el alerta con el mensaje que `throwError` devuelva.
       }
     )
 
@@ -124,7 +142,8 @@ if (confirmar)
           next:() => {
          
             alert('estado Actualizado con Exito!');
-             this.getList(this.page-1);
+             //this.getList(this.page-1);
+             this.getListbyName(this.page-1,this.nombre_campo);
           },
           error:(errorData)=> {
             console.error(errorData);
@@ -134,65 +153,90 @@ if (confirmar)
 
   }
       
-  getList(page : number) : void {
-	  
-
-    this.comercianteService.getListTotal().subscribe(
-      (data) => {
-        if(data.length==0 || !data){
-
-        }else{
-          this.maxSize = data['totalElements']+1;
-          console.log("totElem"+this.maxSize);
+    
+  getListbyName(page : number, nombre:string): void{
+    
+    if(this.nombre_campo==" "){
+      this.comercianteService.getListTotal().subscribe(
+        (data) => {
+          if(data.length==0 || !data){
+  
+          }else{
+            this.maxSize = data['totalElements']+1;
+            console.log("totElem"+this.maxSize);
+          }
         }
-      }
-    )
+      )
+    }
 
-    this.comercianteService.getList(page).subscribe(
-		  (data) => {
-			//if ((!data && !data.result) || (data && data.result && data.result.length ==0)) {
-			console.log(data);
+    this.comercianteService.getList(page, nombre!).subscribe(
+      (data) => {
+      //if ((!data && !data.result) || (data && data.result && data.result.length ==0)) {
+      console.log(data);
       if(data.length==0 || !data){
         this.lista = [];
-			  this.showPagination = false;
-			}
-			else {
+        this.showPagination = false;
+      }
+      else {
         
-			  this.lista = data;      
-			  this.totalItems = data.length;
-        console.log("aqui hay data"+this.maxSize);
-			  this.showPagination = true;
-			}
+        this.lista = data;      
+        this.totalItems = data.length;
+        console.log("aqui hay data"+this.totalItems);
+       // this.maxSize= this.totalItems+1;
+        this.showPagination = true;
+      }
 
-		  },
-		  error => {
+      },
+      error => {
         console.log("error listando comerciantes");
-			// Aquí se debería tratar el error, bien mostrando un mensaje al usuario o de la forma que se desee.
-		  }
-		);
+      // Aquí se debería tratar el error, bien mostrando un mensaje al usuario o de la forma que se desee.
+      }
+    );
+
   }
 
+
+  enviarFormulario(): void {
+
+    if (this.formulario.valid) {
+  
+     this.nombre_campo  = this.formulario.controls.nombre.value!;
+  
+       console.log("nombre:"+this.nombre_campo);
+      
+       this.getListbyName(this.page-1, this.nombre_campo);
+
+    } else {
+  
+      // Manejar caso de formulario inválido
+  
+    }
+  
+  }
 
   ngOnInit(): void {
     
     this.page =0;
 	  this.previousPage =1;
       
-      this.getList(this.page);
+      this.getListbyName(this.page,'');
+      //  this.getList(this.page);
       console.log("tamaño lista: "+this.lista.length);
       console.log("size:"+this.maxSize);
+
   }
 
   loadPage(page: number) {
     if (page !== this.previousPage) {
-      this.previousPage = page;
-      this.getList(this.page-1);
+      this.previousPage = page;     
+      this.getListbyName(this.page-1, this.nombre_campo);      
     }
   }
 
   handlePageChange(event:any) {
     this.page = event;
-    this.getList(this.page-1);
+      console.log("next: "+this.page);  
+      this.getListbyName(this.page-1, this.nombre_campo);    
   }
 
 }

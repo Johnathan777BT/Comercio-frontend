@@ -5,6 +5,7 @@ import { LoginService } from 'src/app/services/auth/login.service';
 import { Comerciante } from 'src/app/services/comerciante/comerciante';
 import { EstablecimientoService } from 'src/app/services/establecimiento/establecimiento.service';
 import { Establecimiento } from 'src/app/services/comerciante/establecimiento';
+import { DataService } from 'src/app/services/data/data.service';
 
 
 @Component({
@@ -69,7 +70,7 @@ export class CrearEstablecimientosComponent implements OnInit {
     return (this.form.at(itemIndex) as FormGroup).get('arreglo') as FormArray;
   }
 
-  constructor(private fb: FormBuilder, private router:Router, private activateRoute: ActivatedRoute, private establecimientoService:EstablecimientoService,    private formBuilder:FormBuilder, private loginService:LoginService) {
+  constructor(private fb: FormBuilder, private router:Router, private activateRoute: ActivatedRoute, private establecimientoService:EstablecimientoService,    private formBuilder:FormBuilder, private loginService:LoginService, private dataService:DataService) {
    
     
     this.check= Boolean(localStorage.getItem('check'));
@@ -119,12 +120,8 @@ export class CrearEstablecimientosComponent implements OnInit {
     console.log("id: "+i);
     let id_est = this.form.get('arreglo').controls[i].controls.id.value;
     this.establecimientoService.delete(id_est).subscribe({
-      next:() => {
-        //this.editMode=false;
-       // this.comerciante=this.registerForm.value as unknown as Comerciante;
+      next:() => {        
         console.log("nombre: "+this.establecimiento.nombre_establecimiento);
-       
-        
       },
       error:(errorData)=> {
         console.error(errorData);
@@ -166,7 +163,7 @@ export class CrearEstablecimientosComponent implements OnInit {
             if(this.idEst==0){
 
               
-            this.establecimientoService.create(this.json).subscribe({
+            this.establecimientoService.create(this.establecimiento).subscribe({
               next:() => {
                
                 console.log("nombre: "+this.establecimiento.nombre_establecimiento);
@@ -185,7 +182,7 @@ export class CrearEstablecimientosComponent implements OnInit {
            else {
 
            
-            this.establecimientoService.update(this.json, id_est).subscribe({
+            this.establecimientoService.update(this.establecimiento, id_est).subscribe({
               next:() => {
                 
                 console.log("nombre: "+this.establecimiento.nombre_establecimiento);
@@ -224,6 +221,10 @@ export class CrearEstablecimientosComponent implements OnInit {
       arreglo.reset();
     }
 
+    getDatos(){
+      return this.dataService.getDatos();
+    }
+
     cargarDataEstablecimientos() {
 
     const arreglo = this.form.get('arreglo') as FormArray;
@@ -253,6 +254,10 @@ export class CrearEstablecimientosComponent implements OnInit {
   
    this.totIngresos.emit(this.totIngresoscom);
    this.totEmpleados.emit(this.totEmpleadoscom);
+
+   this.dataService.setDato1(this.totIngresoscom.toString());
+   this.dataService.setDato2(this.totEmpleadoscom.toString());
+
   }
     
 

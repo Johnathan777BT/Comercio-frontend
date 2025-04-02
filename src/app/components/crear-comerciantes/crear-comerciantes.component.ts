@@ -1,6 +1,6 @@
 import { AfterViewChecked, Component, ViewChild, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Data } from '@angular/router';
 import { LoginService } from 'src/app/services/auth/login.service';
 import { ComercianteService } from 'src/app/services/comerciante/comerciante.service';
 import { Comerciante } from 'src/app/services/comerciante/comerciante';
@@ -9,10 +9,12 @@ import { Municipio } from 'src/app/services/comerciante/municipio';
 import { CrearEstablecimientosComponent } from '../crear-establecimientos/crear-establecimientos.component';
 import { DataService } from 'src/app/services/data/data.service';
 import * as _moment from 'moment';
-
+import { registerLocaleData } from '@angular/common'; 
+import localeDe from '@angular/common/locales/de'; registerLocaleData(localeDe);
 import {ChangeDetectionStrategy} from '@angular/core';
 
 import { DatePipe } from '@angular/common';
+
 
 
 @Component({
@@ -39,10 +41,11 @@ export class CrearComerciantesComponent implements OnInit {
   nro_est:number = 0;
   private dataService = inject(DataService);
   check:boolean=false;
-  g=this.dataService.datosCompartidos();
+  
   seleccionado:number=0;
   totIngresos:number =0;
   totEmpleados:number =0;
+  nombre_dep:string="";
 
   registerForm=this.formBuilder.group({
     id:[''],
@@ -57,9 +60,6 @@ export class CrearComerciantesComponent implements OnInit {
   })
 
   
-  
-
-
   getIngresos(num: number):void{
        this.totIngresos=num;
   }
@@ -87,7 +87,12 @@ export class CrearComerciantesComponent implements OnInit {
   }
 
 
-  constructor(private datePipe: DatePipe, private router:Router, private activateRoute: ActivatedRoute, private comercianteService:ComercianteService, private formBuilder:FormBuilder, private loginService:LoginService  ){
+  getDatos(){
+    return this.dataService.getDatos();
+  }
+  
+
+  constructor(private datePipe: DatePipe, private router:Router, private activateRoute: ActivatedRoute, private comercianteService:ComercianteService, private formBuilder:FormBuilder, private loginService:LoginService ){
    //cambiar este id //environment.userId
    this.idCom = activateRoute.snapshot.params['id'];  
    this.nro_est = activateRoute.snapshot.params['tot'];
@@ -95,37 +100,6 @@ export class CrearComerciantesComponent implements OnInit {
    
    //this.dateAdapter.setLocale('en-GB');
 
-
-   if(this.idCom==0){
-
-   }else{
-
-   this.comercianteService.getListById(this.idCom).subscribe({
-      next: (userData) => {
-        this.comerciante=userData;
-       
-        this.registerForm.controls.id.setValue(userData.id_com.toString());
-        this.registerForm.controls.nombre.setValue( userData.nombre);
-        this.registerForm.controls.fecha_registro.setValue( userData.fecha_registro);
-        this.registerForm.controls.estado.setValue( userData.estado);
-        this.registerForm.controls.correo_electronico.setValue(userData.correo_electronico);
-        this.registerForm.controls.telefono.setValue(userData.telefono);
-        this.registerForm.controls.departamentos.setValue(userData.departamentos.nombreDepartamento);
-     
-
-
-       this.lista = userData;
-      },
-      error: (errorData) => {
-        this.errorMessage=errorData
-      },
-      complete: () => {
-        console.info("User Data ok");
-        console.log("userData;"+this.lista.departamentos);
-        console.log(this.lista);
-      }
-    })
-  }
 
     this.loginService.userLoginOn.subscribe({
       next:(userLoginOn) => {
@@ -136,10 +110,12 @@ export class CrearComerciantesComponent implements OnInit {
   }
 
   
-
-
   ngOnInit(): void {
 
+this.dataService.setDato1("0");
+this.dataService.setDato2("0");
+
+   console.log("datos desde service: "+this.getDatos());
 
     this.comercianteService.getDepartamentos().subscribe(
 		  (data) => {
@@ -161,6 +137,27 @@ export class CrearComerciantesComponent implements OnInit {
                  
           }        
 
+          console.log("nombre_dep: "+ this.nombre_dep);
+          if(this.listaDep.length >0){
+            console.log("llena la lista de dep");
+
+            this.comercianteService.getDepartamentoByName(this.nombre_dep).subscribe(
+              (data1)=> {
+                if(data1.length==0 || !data1){
+              }else{
+                console.log(data1);
+                   let id = data1['id_departamento'];
+                   console.log("id-"+id);
+                   let item2 = { id_departamento: id, nombreDepartamento:  this.nombre_dep }
+                   this.registerForm.controls.departamentos.setValue(item2.id_departamento);
+
+                   this.changeClassesLevel(id);
+              }
+            }
+             );
+
+          }
+
 			}
 
 		  },
@@ -169,6 +166,10 @@ export class CrearComerciantesComponent implements OnInit {
 			// Aquí se debería tratar el error, bien mostrando un mensaje al usuario o de la forma que se desee.
 		  }
 		);
+
+    
+
+
 
     this.comercianteService.getMunicipios().subscribe(
 		  (data) => {
@@ -188,6 +189,56 @@ export class CrearComerciantesComponent implements OnInit {
 			// Aquí se debería tratar el error, bien mostrando un mensaje al usuario o de la forma que se desee.
 		  }
 		);
+
+
+    
+
+   if(this.idCom==0){
+
+   }else{
+
+   this.comercianteService.getListById(this.idCom).subscribe({
+      next: (userData) => {
+        this.comerciante=userData;
+       console.log( "traer fecha:"+userData.fecha_registro);
+       let fec = String(userData.fecha_registro);
+       console.log("fec_dia "+fec.substring(8,fec.length));
+       console.log("fec_mes "+fec.substring(5,7));
+       console.log("fec_año "+fec.substring(0, 4));
+       let dia = Number(fec.substring(8,fec.length))+1;
+       let newF =   fec.substring(0,4)  +"-"+fec.substring(5,7)+"-"+ dia;
+       console.log("newF:"+ newF );
+       let dia1 =  new Date(newF);
+        dia1 = new Date( dia1.setDate(dia1.getDate() +1));
+        console.log("dia "+dia1);
+        
+        var date = this.datePipe.transform((newF), 'yyyy-MM-dd'); 
+        
+        console.log(this.comerciante);
+        this.nombre_dep = userData.nombre_departamento;
+        this.registerForm.controls.id.setValue(userData.id_com.toString());
+        this.registerForm.controls.nombre.setValue( userData.nombre);
+        this.registerForm.controls.fecha_registro.setValue(date);
+        this.registerForm.controls.estado.setValue( userData.estado);
+        this.registerForm.controls.correo_electronico.setValue(userData.correo_electronico);
+        this.registerForm.controls.telefono.setValue(userData.telefono);
+     
+        console.log("date:"+date + "dep: "+ this.nombre_dep) ;
+
+       this.lista = userData;
+      },
+      error: (errorData) => {
+        this.errorMessage=errorData
+      },
+      complete: () => {
+        console.info("User Data ok");
+       // console.log("userData;"+this.lista.departamentos);      
+        console.log(this.lista);
+      }
+    })
+  }
+
+  
 
   }
 
@@ -258,7 +309,7 @@ export class CrearComerciantesComponent implements OnInit {
       console.log("id_com  "+ this.idCom); 
       if(this.idCom!=0){
 
-      this.comercianteService.update(this.json, id_).subscribe({
+      this.comercianteService.updatecom(this.comerciante, id_).subscribe({
         next:() => {
           this.editMode=false;
        
@@ -277,7 +328,7 @@ export class CrearComerciantesComponent implements OnInit {
    
     }else{
 
-      this.comercianteService.create(this.json).subscribe({
+      this.comercianteService.createcom(this.comerciante).subscribe({
         next:() => {
           this.editMode=false;
        
@@ -299,6 +350,7 @@ export class CrearComerciantesComponent implements OnInit {
   }
 
   changeClassesLevel(id: string ) {
+   
     console.log("Hit");
     console.log(id);
     const id_ = Number(id);
@@ -329,10 +381,7 @@ export class CrearComerciantesComponent implements OnInit {
   getId(e:any, id:string)
 {
 
-  this.dataService.datosCompartidos();
-  this.g = this.dataService.datosCompartidos();
-    
-  this.dataService.datosCompartidos2.set(true);
+ 
    localStorage.setItem('check', 'false');
 
   if(e.target.checked)

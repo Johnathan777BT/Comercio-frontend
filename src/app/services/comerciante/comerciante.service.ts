@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpStatusCode  } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Comerciante } from './comerciante';
@@ -11,15 +11,13 @@ import { Comerciante } from './comerciante';
 export class ComercianteService {
 
   constructor(private http:HttpClient) { }
-
    
-  update(comerciante: String, id:number):Observable<any>
+  updatecom(comerciante: Comerciante, id:number):Observable<any>
   {
-    return this.http.put(environment.urlApi+"comerciantes/act/"+id, comerciante).pipe(
+    return this.http.put(environment.urlApi+"comerciantes/update/"+id, comerciante).pipe(
       catchError(this.handleError)
     )
   }
-
    
   update_estado(comerciante: String, id:number):Observable<any>
   {
@@ -29,22 +27,26 @@ export class ComercianteService {
   }
 
   
-  delete(id:number):Observable<any>{
-    return this.http.delete(environment.urlApi+"comerciantes/del/"+id).pipe(
+
+  deletecom(id:number):Observable<any>{ 
+    return this.http.delete(environment.urlApi+"comerciantes/delete/"+id).pipe(
       catchError(this.handleError)
   )
   }
 
-  create(comerciante: String):Observable<any>
+  createcom(comerciante: Comerciante):Observable<any>
   {
-    return this.http.post(environment.urlApi+"comerciantes", comerciante).pipe(
+    return this.http.post(environment.urlApi+"comerciantes/add", comerciante).pipe(
       catchError(this.handleError)
     )
   }
 
-  getList(page:number):Observable<any>
+
+  
+
+  getList(page:number, nombre:string):Observable<any>
   {
-    return this.http.get(environment.urlApi+"comerciantes/listardto/?page="+page).pipe(
+    return this.http.get(environment.urlApi+"comerciantes/listardto/?page="+page+"&nombre="+nombre).pipe(
       catchError(this.handleError)
     )
   }
@@ -61,6 +63,13 @@ export class ComercianteService {
     return this.http.get(environment.urlApi+"departamentos/listar").pipe(
       catchError(this.handleError)
     )
+   }
+
+   getDepartamentoByName(nombre:string):Observable<any>
+   {
+       return this.http.get(environment.urlApi+"departamentos/listar/"+nombre).pipe(
+        catchError(this.handleError)
+       )
    }
 
    getMunicipios():Observable<any>
@@ -97,12 +106,17 @@ export class ComercianteService {
   }
 
 
-  private handleError(error:HttpErrorResponse){
-    if(error.status===0){
+  private handleError(error:HttpErrorResponse): Observable<never>{
+    if(error.status== 403){
+      console.info('No autorizado');
+      return throwError(()=> new Error('No tiene permisos para realizar la solicitud.'));      
+    }
+    else if(error.status===0){
       console.error('Se ha producio un error ', error.error);
     }
     else{
       console.info('Backend retornó el código de estado ', error.status, error.error);
+    
     }
     return throwError(()=> new Error('Algo falló. Por favor intente nuevamente.'));
   }

@@ -6,6 +6,9 @@ import { ListComerciantesComponent } from './components/list-comerciantes/list-c
 import { CrearComerciantesComponent } from './components/crear-comerciantes/crear-comerciantes.component';
 import { CrearEstablecimientosComponent } from './components/crear-establecimientos/crear-establecimientos.component';
 import { ContainerEstablecimientoComponent } from './components/container-establecimiento/container-establecimiento.component';
+import { PersonalDetailsComponent } from './components/personal-details/personal-details.component';
+import { ListUsuariosComponent } from './components/list-usuarios/list-usuarios.component';
+import { UsuarioComponent } from './auth/usuario/usuario.component';
 
 const routes: Routes = [
   {path:'',redirectTo:'/inicio', pathMatch:'full'},
@@ -13,7 +16,10 @@ const routes: Routes = [
   {path:'iniciar-sesion',component:LoginComponent},
   {path:'crear-comerciantes/:id/:tot',component:CrearComerciantesComponent},
   {path:'crear-establecimiento/:id', component:CrearEstablecimientosComponent},
-  {path:'container-establecimiento/:id', component:ContainerEstablecimientoComponent }
+  {path:'container-establecimiento/:id', component:ContainerEstablecimientoComponent },
+  {path:'actualizar-perfil/:id', component:PersonalDetailsComponent  },
+  {path:'listar-usuarios', component:ListUsuariosComponent},
+  {path:'nuevo-usuario', component:UsuarioComponent},
 ];
 
 @NgModule({

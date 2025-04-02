@@ -58,7 +58,9 @@
         [(ngModel)]="seleccionado"
         #mySelect
         (change)="changeClassesLevel(mySelect.value)">
-            <option [value]="item.id_departamento" *ngFor="let item of listaDep">{{item.nombreDepartamento}}</option>
+            <option [value]="item.id_departamento" *ngFor="let item of listaDep"
+           
+            >{{item.nombreDepartamento}}</option>
             </select>
         <div *ngIf="departamentos.invalid && (departamentos.dirty || departamentos.touched)" class="text-danger">
             <div *ngIf="departamentos.errors?.['required']">
@@ -174,8 +176,17 @@
                 </span>  
           </span>
 
+       <!---    <ul>
+            <li *ngFor="let dato of getDatos()">
+                {{dato | number }}
+            </li>
+        </ul> -->
+
     <button type="submit" (click)="saveData()"  class="btn btn-dark mt-3  mx-5">Enviar Formulario</button>
    
+
+
+
     </div> </footer>
     </div>
 
