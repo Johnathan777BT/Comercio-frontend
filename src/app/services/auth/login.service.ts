@@ -10,6 +10,9 @@ import { environment } from 'src/environments/environment';
 })
 export class LoginService {
 
+  //pepito@gmail.com
+  //pepito*123
+
   currentUserLoginOn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   currentUserData: BehaviorSubject<String> =new BehaviorSubject<String>("");
 
