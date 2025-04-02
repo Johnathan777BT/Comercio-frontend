@@ -41,7 +41,7 @@ export class CrearComerciantesComponent implements OnInit {
   nro_est:number = 0;
   private dataService = inject(DataService);
   check:boolean=false;
-  
+  idmun:number=0;
   seleccionado:number=0;
   totIngresos:number =0;
   totEmpleados:number =0;
@@ -362,15 +362,28 @@ this.dataService.setDato2("0");
         this.listaMun = [];			  
 			}
 			else {        
-			  this.listaMun = data;     			  
-        console.log("aqui hay data de mun");			 
+			  this.listaMun = data; 
+       
+       		 
 			}
 
 		  },
 		  error => {
         console.log("error listando comerciantes");
 			// Aquí se debería tratar el error, bien mostrando un mensaje al usuario o de la forma que se desee.
-		  }
+		  }, () => {
+
+        if (this.listaMun.length > 0) {
+          const et = this.listaMun[0]; // Obtener el primer elemento
+          console.log(et.id_municipio + "--");
+          this.idmun = et.id_municipio; // Asignar el id_municipio
+        }
+        
+        console.log("id mun:  "+this.idmun);
+        
+        this.registerForm.controls.municipios.setValue(this.idmun.toString());	
+      }
+     
 		);
     
 

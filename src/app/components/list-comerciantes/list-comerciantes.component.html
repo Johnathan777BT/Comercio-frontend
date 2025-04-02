@@ -27,6 +27,7 @@
         <th scope="col"> Telefono</th>
         <th scope="col"> Correo Electronico</th>
         <th scope="col"> Fecha Registro</th>
+        <th scope="col"> Departamento</th>
         <th scope="col"> Nro Establecimientos</th>
         <th scope="col"> Estado</th>
         <th scope="col"> Acciones</th>
@@ -41,6 +42,7 @@
         <td>{{l.telefono}}</td>
         <td>{{l.correo_electronico}}</td>
         <td>{{l.fecha_registro}}</td>
+        <td>{{l.nombre_departamento}}</td>
         <td>{{l.nroEst}}</td>
         <td><button class="btn btn-info" *ngIf="l.estado==1" (click)="actualizarestado(l)">Activo</button> 
             <button class="btn btn-light" *ngIf="l.estado==0" (click)="actualizarestado(l)">Inactivo</button>
